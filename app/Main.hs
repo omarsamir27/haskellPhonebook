@@ -10,7 +10,7 @@ data Date = Date {day :: Int ,
                   year :: Int} deriving (Read,Eq)
 
 instance Show Date where
-    show date = show (day date) ++ show (month date) ++ show (year date)
+    show date = show (day date) ++ "-" ++ show (month date) ++ "-" ++ show (year date)
 
 createDate :: String -> Date
 createDate date = let [x,y,z] = wordsBy (=='-') date in Date (read x)  (read y)  (read z)
@@ -82,7 +82,7 @@ dispatch db _ filepath = do
 homeScreen :: [Contact] -> String -> IO ()
 homeScreen phoneDB filepath = do
             print "What to do"
-            print "1. Print Book \n 2. Search by name \n 3. Add Contact \n 4. Delete Contact"
+            putStrLn "1. Print Book \n2. Search by name \n3. Add Contact \n4. Delete Contact"
             choice <- getLine
             dispatch phoneDB choice filepath
             homeScreen phoneDB filepath
@@ -93,6 +93,6 @@ main = do
     filepath <- getLine
     phoneBook <- openFile filepath ReadMode
     addressbook <- hGetContents phoneBook
-    hClose phoneBook
+    --hClose phoneBook
     let phoneDB = map (createContact . wordsBy (== ',')) (lines addressbook)
     homeScreen phoneDB filepath
