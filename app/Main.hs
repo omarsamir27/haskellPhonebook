@@ -1,6 +1,7 @@
 module Main where
 import Lib
 import System.IO
+import qualified System.IO.Strict as SIO
 import Data.List
 import Data.List.Split
 import Data.List.Utils
@@ -53,46 +54,48 @@ contactPrinter =  mapM_ print
 dispatch :: [Contact] -> String -> String-> IO ()
 dispatch db "1" _ = contactPrinter db
 dispatch db "2" _ = do
-                print "Write Name to Search With"
+                putStrLn "Write Name to Search With"
                 name <- getLine
                 contactPrinter $ searchContact db name
 dispatch db "3" filepath = do
-                  print "Write Firstname: "
+                  putStrLn "Write Firstname: "
                   fname <- getLine
-                  print "Write Lastname: "
+                  putStrLn "Write Lastname: "
                   lname <- getLine
-                  print "Write Date of Birth (DD-MM-YYYY): "
+                  putStrLn "Write Date of Birth (DD-MM-YYYY): "
                   bdate <- getLine                 
-                  print "Write Email: "
+                  putStrLn "Write Email: "
                   mail <- getLine
-                  print "Write Phonenumber: "
+                  putStrLn "Write Phonenumber: "
                   number <- getLine
-                  print "Write Address: "
+                  putStrLn "Write Address: "
                   place <- getLine 
                   let toADD = createContact [lname , fname , bdate ,place , mail , number]                               
                   addContact [toADD] filepath AppendMode                 
 dispatch db "4" filepath = do
-                        print "Name to Delete: "
+                        putStrLn "Name to Delete: "
                         nametoDel <- getLine
                         addContact (db \\ searchContact db nametoDel) filepath WriteMode
 dispatch db _ filepath = do
-                 print "Wrong Choice"
-                 homeScreen db filepath
+                 putStrLn "Wrong Choice"
+                 homeScreen  filepath
                  
-homeScreen :: [Contact] -> String -> IO ()
-homeScreen phoneDB filepath = do
-            print "What to do"
+homeScreen ::   String -> IO ()
+homeScreen  filepath = do
+            phoneBook <- openFile filepath ReadMode
+            addressbook <- SIO.hGetContents phoneBook
+            putStrLn "What to do"
             putStrLn "1. Print Book \n2. Search by name \n3. Add Contact \n4. Delete Contact"
             choice <- getLine
+            let phoneDB = loadDB addressbook
             dispatch phoneDB choice filepath
-            homeScreen phoneDB filepath
+            homeScreen filepath
+
+loadDB :: String -> [Contact]
+loadDB addressbook = map (createContact . wordsBy (== ',')) (lines addressbook)
 
 main :: IO ()
 main = do
-    print "File Path"
+    putStrLn "File Path"
     filepath <- getLine
-    phoneBook <- openFile filepath ReadMode
-    addressbook <- hGetContents phoneBook
-    --hClose phoneBook
-    let phoneDB = map (createContact . wordsBy (== ',')) (lines addressbook)
-    homeScreen phoneDB filepath
+    homeScreen  filepath
