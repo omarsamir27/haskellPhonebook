@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0f6e57d7b5d7686f2bbac35b3f9eb84b5b83e5d63f5d1345dca1ac4f03169a6d
+-- hash: 88f7c4df9a1acf62d876b301e48eca65805ff83b4ce541641c603b14e763cb04
 
 name:           haskellPhonebook
 version:        0.1.0.0
@@ -37,6 +37,7 @@ library
     , base >=4.7 && <5
     , split
     , strict
+    , time
   default-language: Haskell2010
 
 executable haskellPhonebook-exe
@@ -52,6 +53,7 @@ executable haskellPhonebook-exe
     , haskellPhonebook
     , split
     , strict
+    , time
   default-language: Haskell2010
 
 test-suite haskellPhonebook-test
@@ -68,4 +70,5 @@ test-suite haskellPhonebook-test
     , haskellPhonebook
     , split
     , strict
+    , time
   default-language: Haskell2010
